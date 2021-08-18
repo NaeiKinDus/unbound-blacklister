@@ -89,11 +89,11 @@ class UrlProvider implements Interfaces\ProviderInterface
             $response = $this->client->request('GET', $fileUrl);
             $code = $response->getStatusCode();
         } catch (\Exception $excp) {
-            throw new RuntimeException('Could not fetch master adlist', $code, $excp);
+            throw new RuntimeException('Could not fetch adlist "' . $fileUrl . '"', $code, $excp);
         }
 
         if (($code < 200) || ($code >= 400)) {
-            throw new RuntimeException('Could not fetch master adlist (code ' . $code . '), aborting.', $code);
+            throw new RuntimeException('Could not fetch adlist "' . $fileUrl . '" (code ' . $code . '), aborting.', $code);
         }
 
         return $response->getContent();
