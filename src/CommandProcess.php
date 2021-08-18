@@ -32,6 +32,11 @@ class CommandProcess
         $this->blacklistFile = $input->getArgument(self::ARG_BLACKLIST);
         $this->providersFile = $input->getArgument(self::ARG_PROVIDERS);
         $this->optimize = $input->getOption(self::OPT_OPTIMIZE);
+
+        $dirDest = dirname($this->blacklistFile);
+        if (!file_exists($dirDest)) {
+            throw new \RuntimeException('Destination directory "' . $dirDest . '" does not exist');
+        }
     }
 
     /**
@@ -47,14 +52,17 @@ class CommandProcess
             $this->output->writeln('<error>Unrecognized provider source given, only URL.</error>');
             exit(1);
         }
-        $provider->refresh();
-
-        $formatter = new UnboundFormatter();
-        foreach ($formatter->process($provider, $this->optimize) as $dataBlock) {
-            $formatter->write($dataBlock);
+        try {
+            $provider->refresh();
+            $formatter = new UnboundFormatter();
+            foreach ($formatter->process($provider, $this->optimize) as $dataBlock) {
+                $formatter->write($dataBlock);
+            }
+            $formatter->save($this->blacklistFile);
+        } catch (\Exception $excp) {
+            $this->output->writeln('<error>' . $excp->getMessage() . '</error>');
+            exit(1);
         }
-        $formatter->save($this->blacklistFile);
         // handle chown / chmod
-        // handle error messages
     }
 }

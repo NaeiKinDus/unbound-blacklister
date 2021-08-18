@@ -12,7 +12,7 @@ class UnboundFormatter implements Interfaces\FormatterInterface
     // TTL used for A records, in seconds
     public const DEFAULT_RECORD_TTL = 7200;
 
-    protected string $tempFileName;
+    protected ?string $tempFileName;
     /** @var resource */
     protected $fileDescriptor;
 
@@ -53,7 +53,11 @@ class UnboundFormatter implements Interfaces\FormatterInterface
             $this->reset();
         }
         if (!is_resource($this->fileDescriptor)) {
-            $this->tempFileName = tempnam(sys_get_temp_dir(), 'unbound-');
+            $tmpDir = sys_get_temp_dir();
+            $this->tempFileName = tempnam($tmpDir, 'unbound-');
+            if ($this->tempFileName === false) {
+                throw new \RuntimeException('Could not generate a new temporary file in temporary directory "' . $tmpDir . '"');
+            }
             $this->fileDescriptor = fopen($this->tempFileName, 'w');
             $dataBlock = "server:\n" . $dataBlock;
         }
@@ -97,7 +101,7 @@ class UnboundFormatter implements Interfaces\FormatterInterface
         if (is_resource($this->fileDescriptor)) {
             fclose($this->fileDescriptor);
         }
-        if ($this->tempFileName) {
+        if (!empty($this->tempFileName)) {
             @unlink($this->tempFileName);
             $this->tempFileName = null;
         }
