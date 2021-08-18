@@ -1,0 +1,34 @@
+{
+  "name": "naeikindus/unbound-blacklist",
+  "description": "A phar util to retrieve a list of URLs containing adlists and set them in a file used by unbound to block retrieved domains.",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "NaeiKinDus",
+      "homepage": "https://github.com/naeikindus",
+      "role": "Developer"
+    }
+  ],
+  "keywords": [
+    "unbound",
+    "pfsense",
+    "util",
+    "phar",
+    "adlist"
+  ],
+  "require": {
+    "php": "^7.4",
+    "ext-curl": "*",
+    "symfony/console": "^5.3.6",
+    "symfony/http-client": "^5.3.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Nullified\\": "src/"
+    }
+  },
+  "require-dev": {
+    "symfony/finder": "^5.3.4",
+    "seld/phar-utils": "^1.1.1"
+  }
+}
