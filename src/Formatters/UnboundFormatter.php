@@ -23,8 +23,11 @@ class UnboundFormatter implements Interfaces\FormatterInterface
     {
         /** @var Adlist $adlist */
         foreach ($provider->getAdlists() as $adlist) {
-            $dataBlock = "\n# Generation date: {$adlist->lastUpdate->format(DATE_ATOM)}\n" .
-                "# Source: $adlist->source\n";
+            $dataBlock = '';
+            if ($adlist->lastUpdate) {
+                $dataBlock .= "\n# Generation date: {$adlist->lastUpdate->format(DATE_ATOM)}\n";
+            }
+            $dataBlock .= "# Source: $adlist->source\n";
             foreach ($adlist->blockList as $domain) {
                 $domain = addslashes($domain);
                 $dataBlock .=
