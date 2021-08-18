@@ -12,20 +12,31 @@ class CommandProcess
 {
     public const ARG_BLACKLIST  = 'unbound_file';
     public const ARG_PROVIDERS  = 'providers_file';
+    public const OPT_OPTIMIZE   = 'optimize';
+    public const OPT_OPTIMIZE_SHORT = 'o';
 
     protected InputInterface    $input;
     protected OutputInterface   $output;
     protected string            $blacklistFile;
     protected string            $providersFile;
+    protected bool              $optimize;
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     public function __construct(InputInterface $input, OutputInterface $output) {
         $this->input = $input;
         $this->output = $output;
 
         $this->blacklistFile = $input->getArgument(self::ARG_BLACKLIST);
         $this->providersFile = $input->getArgument(self::ARG_PROVIDERS);
+        $this->optimize = $input->getOption(self::OPT_OPTIMIZE);
     }
 
+    /**
+     * Start the command
+     */
     public function process(): void
     {
         if (substr($this->providersFile, 0, 4) == 'http') {
@@ -39,11 +50,10 @@ class CommandProcess
         $provider->refresh();
 
         $formatter = new UnboundFormatter();
-        foreach ($formatter->process($provider) as $dataBlock) {
+        foreach ($formatter->process($provider, $this->optimize) as $dataBlock) {
             $formatter->write($dataBlock);
         }
         $formatter->save($this->blacklistFile);
-
         // handle chown / chmod
         // handle error messages
     }

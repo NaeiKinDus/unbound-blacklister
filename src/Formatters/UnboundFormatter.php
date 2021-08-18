@@ -19,8 +19,9 @@ class UnboundFormatter implements Interfaces\FormatterInterface
     /**
      * {@inheritDoc}
      */
-    public function process(ProviderInterface $provider): \Generator
+    public function process(ProviderInterface $provider, bool $deduplicate = true): \Generator
     {
+        $processedDomains = [];
         /** @var Adlist $adlist */
         foreach ($provider->getAdlists() as $adlist) {
             $dataBlock = '';
@@ -29,10 +30,15 @@ class UnboundFormatter implements Interfaces\FormatterInterface
             }
             $dataBlock .= "# Source: $adlist->source\n";
             foreach ($adlist->blockList as $domain) {
-                $domain = addslashes($domain);
-                $dataBlock .=
-                    "local-zone: \"$domain\" redirect\n" .
-                    "local-data: \"$domain " . self::DEFAULT_RECORD_TTL . " IN A " . self::BLOCKLIST_IP . "\"\n";
+                $domain = addslashes(strtolower($domain));
+                if (!$deduplicate || ($deduplicate && empty($processedDomains[$domain]))) {
+                    $dataBlock .=
+                        "local-zone: \"$domain\" redirect\n" .
+                        "local-data: \"$domain " . self::DEFAULT_RECORD_TTL . " IN A " . self::BLOCKLIST_IP . "\"\n";
+                    if ($deduplicate) {
+                        $processedDomains[$domain] = 1;
+                    }
+                }
             }
             yield $dataBlock;
         }
