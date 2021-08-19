@@ -24,4 +24,9 @@ interface ProviderInterface
      * @return Generator<Adlist>
      */
     public function getAdlists(): Generator;
+
+    /**
+     * @return int
+     */
+    public function getAdlistCount(): int;
 }

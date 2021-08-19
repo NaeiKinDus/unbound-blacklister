@@ -15,6 +15,7 @@ class UrlProvider implements Interfaces\ProviderInterface
     protected string                $source;
     protected HttpClientInterface   $client;
     protected array                 $adlists = [];
+    protected int                   $adlistCount = 0;
     protected string                $parser;
     protected bool                  $hardFail = false;
 
@@ -42,6 +43,14 @@ class UrlProvider implements Interfaces\ProviderInterface
     /**
      * {@inheritDoc}
      */
+    public function getAdlistCount(): int
+    {
+        return $this->adlistCount;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function refresh(): void
     {
         try {
@@ -50,6 +59,7 @@ class UrlProvider implements Interfaces\ProviderInterface
             throw new RuntimeException('Could not fetch master adlist', 0, $excp);
         }
         $this->adlists = preg_split('/[\r\n]+/', rtrim($content));
+        $this->adlistCount = count($this->adlists);
     }
 
     /**

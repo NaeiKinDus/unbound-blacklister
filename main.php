@@ -42,6 +42,12 @@ $app = (new SingleCommandApplication())
             'Deduplicate domains and optimize formatter output',
             true
     )
+    ->addOption(
+        CommandProcess::OPT_PROGRESS,
+        '',
+        InputOption::VALUE_NONE,
+        'Deduplicate domains and optimize formatter output'
+    )
     ->setCode(
         fn(InputInterface $input, OutputInterface $output) => (new CommandProcess($input, $output))->process()
     )

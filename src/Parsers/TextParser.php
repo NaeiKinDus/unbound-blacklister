@@ -45,5 +45,6 @@ class TextParser implements ParserInterface
 
             $adlist->blockList[] = $domain;
         }
+        $adlist->size = count($adlist->blockList);
     }
 }

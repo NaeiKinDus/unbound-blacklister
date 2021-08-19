@@ -10,16 +10,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CommandProcess
 {
-    public const ARG_BLACKLIST  = 'unbound_file';
-    public const ARG_PROVIDERS  = 'providers_file';
-    public const OPT_OPTIMIZE   = 'optimize';
+    public const ARG_BLACKLIST      = 'unbound_file';
+    public const ARG_PROVIDERS      = 'providers_file';
+    public const OPT_OPTIMIZE       = 'optimize';
     public const OPT_OPTIMIZE_SHORT = 'o';
+    public const OPT_PROGRESS       = 'progress';
 
     protected InputInterface    $input;
     protected OutputInterface   $output;
     protected string            $blacklistFile;
     protected string            $providersFile;
     protected bool              $optimize;
+    protected bool              $progress;
 
     /**
      * @param InputInterface $input
@@ -32,6 +34,7 @@ class CommandProcess
         $this->blacklistFile = $input->getArgument(self::ARG_BLACKLIST);
         $this->providersFile = $input->getArgument(self::ARG_PROVIDERS);
         $this->optimize = $input->getOption(self::OPT_OPTIMIZE);
+        $this->progress = $input->getOption(self::OPT_PROGRESS);
 
         $dirDest = dirname($this->blacklistFile);
         if (!file_exists($dirDest)) {
@@ -54,7 +57,7 @@ class CommandProcess
         }
         try {
             $provider->refresh();
-            $formatter = new UnboundFormatter();
+            $formatter = new UnboundFormatter($this->output, $this->progress);
             foreach ($formatter->process($provider, $this->optimize) as $dataBlock) {
                 $formatter->write($dataBlock);
             }
@@ -63,6 +66,5 @@ class CommandProcess
             $this->output->writeln('<error>' . $excp->getMessage() . '</error>');
             exit(1);
         }
-        // handle chown / chmod
     }
 }

@@ -7,20 +7,22 @@ use DateTime;
 class Adlist
 {
     /**
-     * Source (path, URI, ...).
-     * @var string
+     * @var string Source (path, URI, ...).
      */
     public string       $source;
 
     /**
-     * A list of ad serving domains to be blocked.
-     * @var array<string>
+     * @var array<string> A list of ad serving domains to be blocked.
      */
     public array        $blockList = [];
 
     /**
-     * Date of the last update, if a local database is available.
-     * @var DateTime|null
+     * @var DateTime|null Date of the last update, if a local database is available.
      */
     public ?DateTime    $lastUpdate;
+
+    /**
+     * @var int Number domains the ad list contains.
+     */
+    public int          $size;
 }
